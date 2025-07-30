@@ -216,7 +216,7 @@ class SpookyAds {
                 </div>
                 <ins class="adsbygoogle"
                      style="display:block; width:300px; height:250px;"
-                     data-ad-client="ca-pub-YOUR_PUBLISHER_ID"
+                     data-ad-client="ca-pub-8983597889273389"
                      data-ad-slot="YOUR_AD_SLOT_ID">
                 </ins>
             `;
