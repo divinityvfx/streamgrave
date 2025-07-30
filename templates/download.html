@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Converting... - StreamGrave</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="halloween-bg"></div>
+    
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="navbar-brand mb-0 h1">
+                <i class="fas fa-music"></i> StreamGrave
+                <small class="text-muted">YouTube Downloader</small>
+            </a>
+            <div class="navbar-nav">
+                <div class="online-counter">
+                    <i class="fas fa-users text-warning"></i>
+                    <span id="online-count" class="text-white">-</span>
+                    <small class="text-muted d-none d-md-inline">online</small>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="spooky-card">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h2 class="spooky-title">
+                                <i class="fas fa-magic"></i> Converting Your {{ format.upper() if format else 'WAV' }}
+                            </h2>
+                            <p class="text-white-50">Please wait while we process your download...</p>
+                        </div>
+
+                        <div class="video-info mb-4">
+                            <h5 class="text-warning">
+                                <i class="fas fa-video"></i> {{ video_info.title }}
+                            </h5>
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <small class="text-white-50">
+                                        <i class="fas fa-user"></i> {{ video_info.uploader }}
+                                    </small>
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="text-white-50">
+                                        <i class="fas fa-clock"></i> 
+                                        {% if video_info.duration %}
+                                            {{ (video_info.duration // 60) }}:{{ '{:02d}'.format(video_info.duration % 60) }}
+                                        {% else %}
+                                            Unknown duration
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <small class="text-info">
+                                    <i class="fas fa-{{ 'film' if format == 'mp4' else 'music' }}"></i> 
+                                    Format: {{ format.upper() if format else 'WAV' }} | Quality: {{ quality if quality else bitrate }}
+                                    {% if (quality or bitrate) == 'best' %}
+                                        (Best Available)
+                                    {% elif format == 'mp4' %}
+                                        {% if (quality or bitrate) in ['1080p', '720p', '480p', '360p'] %}
+                                            ({{ (quality or bitrate).upper() }})
+                                        {% endif %}
+                                    {% else %}
+                                        {% if (quality or bitrate) in ['320', '192', '128'] %}
+                                            kbps
+                                        {% endif %}
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="progress-container">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span id="progress-stage" class="text-warning">Initializing...</span>
+                                    <span id="progress-percent" class="text-info">0%</span>
+                                </div>
+                                <div class="progress spooky-progress">
+                                    <div id="progress-bar" 
+                                         class="progress-bar bg-warning" 
+                                         role="progressbar" 
+                                         style="width: 0%" 
+                                         aria-valuenow="0" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="loading-spinner" class="text-center">
+                                <i class="fas fa-spinner fa-spin fa-2x text-warning mb-2"></i>
+                                <p class="text-white-50">Processing your {{ format if format else 'audio' }} file...</p>
+                            </div>
+                        </div>
+
+                        <div id="download-section" class="text-center" style="display: none;">
+                            <div class="mb-3">
+                                <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                                <h4 class="text-success">Conversion Complete!</h4>
+                                <p class="text-white-50">Your {{ format.upper() if format else 'WAV' }} file is ready for download</p>
+                            </div>
+                            
+                            <div class="d-grid gap-2 d-md-block">
+                                <a id="download-link" href="#" class="btn spooky-btn-primary btn-lg">
+                                    <i class="fas fa-download"></i> Download WAV File
+                                </a>
+                                <a href="{{ url_for('index') }}" class="btn spooky-btn-secondary btn-lg">
+                                    <i class="fas fa-arrow-left"></i> Convert Another
+                                </a>
+                            </div>
+
+                            <div class="mt-3">
+                                <small class="text-warning">
+                                    <i class="fas fa-clock"></i>
+                                    This file will be automatically deleted in 5 minutes for privacy.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div id="error-section" class="text-center" style="display: none;">
+                            <div class="mb-3">
+                                <i class="fas fa-exclamation-triangle fa-3x text-danger mb-2"></i>
+                                <h4 class="text-danger">Conversion Failed</h4>
+                                <p id="error-message" class="text-white-50"></p>
+                            </div>
+                            
+                            <div class="d-grid gap-2 d-md-block">
+                                <a href="{{ url_for('index') }}" class="btn spooky-btn-primary btn-lg">
+                                    <i class="fas fa-arrow-left"></i> Try Again
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/themes.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ads.js') }}"></script>
+    <script>
+        const videoId = '{{ video_id }}';
+        let pollInterval;
+
+        function updateProgress() {
+            fetch(`/progress/${videoId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const progressBar = document.getElementById('progress-bar');
+                    const progressPercent = document.getElementById('progress-percent');
+                    const progressStage = document.getElementById('progress-stage');
+                    const loadingSpinner = document.getElementById('loading-spinner');
+                    const downloadSection = document.getElementById('download-section');
+                    const errorSection = document.getElementById('error-section');
+                    const errorMessage = document.getElementById('error-message');
+                    const downloadLink = document.getElementById('download-link');
+
+                    progressBar.style.width = data.progress + '%';
+                    progressBar.setAttribute('aria-valuenow', data.progress);
+                    progressPercent.textContent = Math.round(data.progress) + '%';
+                    progressStage.textContent = data.stage;
+
+                    if (data.status === 'completed') {
+                        clearInterval(pollInterval);
+                        loadingSpinner.style.display = 'none';
+                        downloadSection.style.display = 'block';
+                        downloadLink.href = `/download_file/${data.filename}`;
+                        
+                        // Show ad after successful download
+                        if (window.spookyAds) {
+                            window.spookyAds.showAdAfterDownload();
+                        }
+                    } else if (data.status === 'error') {
+                        clearInterval(pollInterval);
+                        loadingSpinner.style.display = 'none';
+                        errorSection.style.display = 'block';
+                        errorMessage.textContent = data.stage;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking progress:', error);
+                });
+        }
+
+        // Start polling for progress
+        pollInterval = setInterval(updateProgress, 1000);
+        updateProgress(); // Initial call
+        
+        // Update online count every 10 seconds
+        function updateOnlineCount() {
+            fetch('/api/online-count')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('online-count').textContent = data.count;
+                })
+                .catch(error => {
+                    console.error('Error fetching online count:', error);
+                });
+        }
+        
+        // Update online count immediately and then every 10 seconds
+        updateOnlineCount();
+        setInterval(updateOnlineCount, 10000);
+    </script>
+</body>
+  </html>
+  
