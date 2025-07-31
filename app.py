@@ -242,6 +242,7 @@ def download_and_convert(url, quality, video_id, format_type='wav'):
                 'progress_hooks': [progress_hook],
                 'merge_output_format': 'mp4',
                 'cookiefile': 'cookies.txt',
+                'nocheckcertificate': True,
                 
                 
             }
@@ -261,6 +262,7 @@ def download_and_convert(url, quality, video_id, format_type='wav'):
                 ] if quality == 'best' else [],
                 'progress_hooks': [progress_hook],
                 'cookiefile': 'cookies.txt',
+                'nocheckcertificate': True,
                 
             }
         
