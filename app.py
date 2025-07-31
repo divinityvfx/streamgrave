@@ -18,13 +18,20 @@ import time
 
 
 
-# Get cookies.txt content from the secret
+# Get cookies.txt content from the environment variable
 cookies_content = os.environ.get("YTDL_COOKIES")
 
-# Save it as an actual file yt-dlp can use
+# Save cookies content to a file for yt-dlp to use
 if cookies_content:
-    with open("cookies.txt", "w", newline="\n") as f:
-        f.write(cookies_content)
+    try:
+        with open("cookies.txt", "w", encoding="utf-8", newline="\n") as f:
+            f.write(cookies_content.strip() + "\n")
+        logging.info("cookies.txt written from environment.")
+    except Exception as e:
+        logging.error(f"Failed to write cookies.txt: {e}")
+else:
+    logging.warning("YTDL_COOKIES environment variable not set.")
+    
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
