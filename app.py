@@ -16,6 +16,16 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 import threading
 import time
 
+
+
+# Get cookies.txt content from the secret
+cookies_content = os.environ.get("YTDL_COOKIES")
+
+# Save it as an actual file yt-dlp can use
+if cookies_content:
+    with open("cookies.txt", "w", newline="\n") as f:
+        f.write(cookies_content)
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -153,6 +163,8 @@ def get_video_info(url):
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
+            'cookiefile': 'cookies.txt',
+            'nocheckcertificate': True,
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -162,6 +174,8 @@ def get_video_info(url):
                     'title': info.get('title', 'Unknown'),
                     'duration': info.get('duration', 0),
                     'uploader': info.get('uploader', 'Unknown')
+                    'cookiefile': 'cookies.txt',
+                    'nocheckcertificate': True,
                 }
             else:
                 return None
