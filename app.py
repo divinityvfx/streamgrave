@@ -170,7 +170,7 @@ def get_video_info(url):
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
-            'cookies': 'cookies.txt',
+            'cookiefile': 'cookies.txt' if os.path.exists('cookies.txt') else None,
             'no-check-certificate': True,
         }
         
@@ -181,7 +181,7 @@ def get_video_info(url):
                     'title': info.get('title', 'Unknown'),
                     'duration': info.get('duration', 0),
                     'uploader': info.get('uploader', 'Unknown'),
-                    'cookies': 'cookies.txt',
+                    'cookiefile': 'cookies.txt' if os.path.exists('cookies.txt') else None,
                     'no-check-certificate': True,
                 }
             else:
@@ -262,7 +262,7 @@ def download_and_convert(url, quality, video_id, format_type='wav'):
                 'outtmpl': os.path.join(temp_dir, '%(title)s.%(ext)s'),
                 'progress_hooks': [progress_hook],
                 'merge_output_format': 'mp4',
-                'cookies': 'cookies.txt',
+                'cookiefile': 'cookies.txt' if os.path.exists('cookies.txt') else None,
                 'no-check-certificate': True,
                 
                 
@@ -282,7 +282,7 @@ def download_and_convert(url, quality, video_id, format_type='wav'):
                     '-ac', '2',      # Stereo
                 ] if quality == 'best' else [],
                 'progress_hooks': [progress_hook],
-                'cookies': 'cookies.txt',
+                'cookiefile': 'cookies.txt' if os.path.exists('cookies.txt') else None,
                 'no-check-certificate': True,
                 
             }
