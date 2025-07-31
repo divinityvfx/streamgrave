@@ -173,7 +173,7 @@ def get_video_info(url):
                 return {
                     'title': info.get('title', 'Unknown'),
                     'duration': info.get('duration', 0),
-                    'uploader': info.get('uploader', 'Unknown')
+                    'uploader': info.get('uploader', 'Unknown'),
                     'cookiefile': 'cookies.txt',
                     'nocheckcertificate': True,
                 }
