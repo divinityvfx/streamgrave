@@ -241,7 +241,7 @@ def download_and_convert(url, quality, video_id, format_type='wav'):
                 'outtmpl': os.path.join(temp_dir, '%(title)s.%(ext)s'),
                 'progress_hooks': [progress_hook],
                 'merge_output_format': 'mp4',
-                "--cookies", "cookies.txt",
+                'cookiefile': 'cookies.txt',
                 'nocheckcertificate': True,
                 
                 
@@ -261,7 +261,7 @@ def download_and_convert(url, quality, video_id, format_type='wav'):
                     '-ac', '2',      # Stereo
                 ] if quality == 'best' else [],
                 'progress_hooks': [progress_hook],
-                "--cookies", "cookies.txt",
+                'cookiefile': 'cookies.txt',
                 'nocheckcertificate': True,
                 
             }
