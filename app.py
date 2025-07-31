@@ -164,7 +164,7 @@ def get_video_info(url):
             'quiet': True,
             'no_warnings': True,
             'cookies': 'cookies.txt',
-            '--no-check-certificate',
+            'no-check-certificate': True,
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -175,7 +175,7 @@ def get_video_info(url):
                     'duration': info.get('duration', 0),
                     'uploader': info.get('uploader', 'Unknown'),
                     'cookies': 'cookies.txt',
-                    '--no-check-certificate',
+                    'no-check-certificate': True,
                 }
             else:
                 return None
@@ -256,7 +256,7 @@ def download_and_convert(url, quality, video_id, format_type='wav'):
                 'progress_hooks': [progress_hook],
                 'merge_output_format': 'mp4',
                 'cookies': 'cookies.txt',
-                '--no-check-certificate',
+                'no-check-certificate': True,
                 
                 
             }
@@ -276,7 +276,7 @@ def download_and_convert(url, quality, video_id, format_type='wav'):
                 ] if quality == 'best' else [],
                 'progress_hooks': [progress_hook],
                 'cookies': 'cookies.txt',
-                '--no-check-certificate',
+                'no-check-certificate': True,
                 
             }
         
